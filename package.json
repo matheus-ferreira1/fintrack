@@ -13,10 +13,13 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@nuxt/eslint": "1.15.2",
     "@nuxt/ui": "^4.5.1",
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "nuxt": "^4.3.1",
+    "nuxt-auth-utils": "0.5.29",
     "pg": "^8.20.0",
     "tailwindcss": "^4.2.1",
     "vue": "^3.5.29",
@@ -24,6 +27,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/pg": "^8.18.0",
     "drizzle-kit": "^0.31.9",
     "tsx": "^4.21.0"
