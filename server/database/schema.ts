@@ -8,7 +8,7 @@ export const users = pgTable('users', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   passwordHash: text('password_hash').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull()
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
 
 export const categories = pgTable('categories', {
@@ -17,7 +17,7 @@ export const categories = pgTable('categories', {
   name: varchar('name', { length: 255 }).notNull(),
   color: varchar('color', { length: 7 }).notNull(),
   type: transactionTypeEnum('type').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull()
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
 export const transactions = pgTable('transactions', {
@@ -29,5 +29,5 @@ export const transactions = pgTable('transactions', {
   type: transactionTypeEnum('type').notNull(),
   isRecurring: boolean('is_recurring').default(false).notNull(),
   date: date('date').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull()
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 })

@@ -13,7 +13,7 @@ defineProps<{
     <h1
       :class="[
         'font-bold text-xl text-primary',
-        collapsed ? 'hidden' : 'block'
+        collapsed ? 'hidden' : 'block',
       ]"
     >
       FinTrack

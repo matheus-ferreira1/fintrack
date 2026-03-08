@@ -3,17 +3,16 @@ import { z } from 'zod'
 import { db } from '~~/server/database'
 import { users } from '~~/server/database/schema'
 
-
 const loginSchema = z.object({
   email: z.email().max(255),
-  password: z.string().min(6).max(128)
+  password: z.string().min(6).max(128),
 })
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, loginSchema.parse)
 
   const user = await db.query.users.findFirst({
-    where: eq(users.email, body.email)
+    where: eq(users.email, body.email),
   })
 
   if (!user) {
@@ -24,9 +23,9 @@ export default defineEventHandler(async (event) => {
   if (!isPasswordValid) {
     throw createError({ statusCode: 401, statusMessage: 'Invalid credentials' })
   }
-    
+
   await setUserSession(event, {
-    user
+    user,
   })
 
   setResponseStatus(event, 201)

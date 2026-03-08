@@ -8,11 +8,11 @@ useSeoMeta({
   title,
   ogTitle: title,
   description,
-  ogDescription: description
+  ogDescription: description,
 })
 
 definePageMeta({
-  layout: 'landing'
+  layout: 'landing',
 })
 </script>
 
@@ -21,4 +21,3 @@ definePageMeta({
     home
   </div>
 </template>
-

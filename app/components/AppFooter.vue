@@ -3,7 +3,7 @@
     icon="ic:baseline-wallet"
     class="h-px"
     :ui="{
-      icon: 'text-primary'
+      icon: 'text-primary',
     }"
   />
 

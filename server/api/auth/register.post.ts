@@ -3,18 +3,17 @@ import { z } from 'zod'
 import { db } from '~~/server/database'
 import { users } from '~~/server/database/schema'
 
-
 const registerSchema = z.object({
   name: z.string().min(2).max(255),
   email: z.email().max(255),
-  password: z.string().min(6).max(128)
+  password: z.string().min(6).max(128),
 })
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, registerSchema.parse)
 
   const existing = await db.query.users.findFirst({
-    where: eq(users.email, body.email)
+    where: eq(users.email, body.email),
   })
 
   if (existing) {
@@ -26,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const [user] = await db.insert(users).values({
     name: body.name,
     email: body.email,
-    passwordHash
+    passwordHash,
   }).returning({ id: users.id, name: users.name, email: users.email, createdAt: users.createdAt, updatedAt: users.updatedAt })
 
   if (!user) {
@@ -34,7 +33,7 @@ export default defineEventHandler(async (event) => {
   }
 
   await setUserSession(event, {
-    user
+    user,
   })
 
   setResponseStatus(event, 201)
