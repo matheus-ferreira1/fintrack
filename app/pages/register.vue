@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { registerSchema } from '#shared/schemas/auth'
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
-import z from 'zod'
+import type * as z from 'zod'
 
 definePageMeta({
   layout: 'auth',
@@ -31,13 +32,7 @@ const fields: AuthFormField[] = [
   },
 ]
 
-const schema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  email: z.email('Invalid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-})
-
-type Schema = z.output<typeof schema>
+type Schema = z.output<typeof registerSchema>
 
 const { mutate, loading } = useApiMutation<UserDTO>('/api/auth/register', {
   method: 'POST',
@@ -57,7 +52,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 <template>
   <UAuthForm
     :fields="fields"
-    :schema="schema"
+    :schema="registerSchema"
     :loading="loading"
     title="Create an account"
     :submit="{ label: 'Create account' }"

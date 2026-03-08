@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import { loginSchema } from '#shared/schemas/auth'
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
-import z from 'zod'
+import type z from 'zod'
 
 definePageMeta({
   layout: 'auth',
@@ -25,12 +26,7 @@ const fields: AuthFormField[] = [
   },
 ]
 
-const schema = z.object({
-  email: z.email('Invalid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-})
-
-type Schema = z.output<typeof schema>
+type Schema = z.output<typeof loginSchema>
 
 const { mutate, loading } = useApiMutation<UserDTO>('/api/auth/login', {
   method: 'POST',
@@ -51,7 +47,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 <template>
   <UAuthForm
     :fields="fields"
-    :schema="schema"
+    :schema="loginSchema"
     title="Welcome back"
     icon="i-lucide-lock"
     :loading="loading"

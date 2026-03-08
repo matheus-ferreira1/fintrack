@@ -1,12 +1,7 @@
+import { loginSchema } from '#shared/schemas/auth'
 import { eq } from 'drizzle-orm'
-import { z } from 'zod'
 import { db } from '~~/server/database'
 import { users } from '~~/server/database/schema'
-
-const loginSchema = z.object({
-  email: z.email().max(255),
-  password: z.string().min(6).max(128),
-})
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, loginSchema.parse)
