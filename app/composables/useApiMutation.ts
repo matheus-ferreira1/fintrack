@@ -10,7 +10,7 @@ export function useApiMutation<T>(
   async function mutate(body?: Record<string, unknown>): Promise<T | undefined> {
     loading.value = true
     try {
-      return await $fetch<T>(url, { ...options, body })
+      return $fetch<T>(url, { ...options, body }) as T
     }
     catch (err) {
       const error = err as FetchError
