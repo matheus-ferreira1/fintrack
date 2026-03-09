@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
-import type { FetchError } from 'ofetch'
 
 definePageMeta({
   middleware: 'auth',
 })
 
 const toast = useToast()
+const confirm = useConfirmDialog()
 
-const { data: categories, refresh, status } = await useFetch<Category[]>('/api/categories')
+const { data: categories, refresh, pending } = await useFetch<Category[]>('/api/categories', { key: 'categories' })
 
 const search = ref('')
+const isDeleting = ref(false)
 const typeFilter = ref<'all' | 'income' | 'expense'>('all')
 
 const filteredCategories = computed(() => {
@@ -45,15 +46,24 @@ function openEditModal(category: Category) {
 }
 
 async function handleDelete(id: string) {
-  try {
-    await $fetch(`/api/categories/${id}`, { method: 'DELETE' })
-    toast.add({ title: 'Category deleted', color: 'success', icon: 'i-lucide-check-circle' })
-    refresh()
-  }
-  catch (err) {
-    const error = err as FetchError
-    const message = error.data?.statusMessage ?? 'Failed to delete category'
-    toast.add({ title: 'Something went wrong', description: message, color: 'error' })
+  const confirmed = await confirm({
+    title: 'Delete category',
+    description: 'Are you sure you want to delete this category?',
+  })
+
+  if (confirmed) {
+    try {
+      isDeleting.value = true
+      await $fetch(`/api/categories/${id}`, { method: 'DELETE' })
+      toast.add({ title: 'Category deleted', color: 'success', icon: 'i-lucide-check-circle' })
+      refresh()
+    }
+    catch (err) {
+      toast.add({ title: 'Something went wrong', description: parseApiError(err), color: 'error' })
+    }
+    finally {
+      isDeleting.value = false
+    }
   }
 }
 
@@ -129,7 +139,7 @@ const columns: TableColumn<Category>[] = [
     <UTable
       :data="filteredCategories"
       :columns="columns"
-      :loading="status === 'pending'"
+      :loading="pending"
       class="w-full"
     >
       <template #color-cell="{ row }">

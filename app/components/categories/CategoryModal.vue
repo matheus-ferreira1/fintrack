@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { categorySchema } from '#shared/schemas/category';
-import type { FetchError } from 'ofetch';
 
 const props = defineProps<{
   category?: Category | null
@@ -18,7 +17,7 @@ const isEditing = computed(() => !!props.category)
 
 const state = reactive({
   name: '',
-  type: 'expense' as 'income' | 'expense',
+  type: 'expense' as TransactionType,
   color: '#6366f1',
 })
 
@@ -63,9 +62,7 @@ async function onSubmit() {
     emit('success')
   }
   catch (err) {
-    const error = err as FetchError
-    const message = error.data?.message ?? error.data?.statusMessage ?? 'An unknown error occurred'
-    toast.add({ title: 'Something went wrong', description: message, color: 'error' })
+    toast.add({ title: 'Something went wrong', description: parseApiError(err), color: 'error' })
   }
   finally {
     loading.value = false

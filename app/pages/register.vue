@@ -10,6 +10,7 @@ definePageMeta({
 
 const { fetch: refreshSession } = useUserSession()
 const toast = useToast()
+const pending = ref(false)
 
 const fields: AuthFormField[] = [
   {
@@ -34,17 +35,19 @@ const fields: AuthFormField[] = [
 
 type Schema = z.output<typeof registerSchema>
 
-const { mutate, loading } = useApiMutation<UserDTO>('/api/auth/register', {
-  method: 'POST',
-})
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
-  const result = await mutate(payload.data)
-  if (result) {
+  try {
+    pending.value = true
+    await $fetch('/api/auth/register', {
+      method: 'POST',
+      body: payload.data,
+    })
     await refreshSession()
     await navigateTo('/dashboard')
-    toast.add({
-      title: 'Welcome!',
-    })
+    toast.add({ title: 'Welcome!' })
+  }
+  catch (err) {
+    toast.add({ title: 'Something went wrong', description: parseApiError(err), color: 'error' })
   }
 }
 </script>
@@ -53,7 +56,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
   <UAuthForm
     :fields="fields"
     :schema="registerSchema"
-    :loading="loading"
+    :loading="pending"
     title="Create an account"
     :submit="{ label: 'Create account' }"
     @submit="onSubmit"

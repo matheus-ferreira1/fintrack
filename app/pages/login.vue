@@ -10,6 +10,7 @@ definePageMeta({
 
 const { fetch: refreshSession } = useUserSession()
 const toast = useToast()
+const pending = ref(false)
 
 const fields: AuthFormField[] = [
   {
@@ -28,18 +29,22 @@ const fields: AuthFormField[] = [
 
 type Schema = z.output<typeof loginSchema>
 
-const { mutate, loading } = useApiMutation<UserDTO>('/api/auth/login', {
-  method: 'POST',
-})
-
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
-  const result = await mutate(payload.data)
-  if (result) {
+  try {
+    pending.value = true
+    await $fetch('/api/auth/login', {
+      method: 'POST',
+      body: payload.data,
+    })
     await refreshSession()
     await navigateTo('/dashboard')
-    toast.add({
-      title: 'Welcome!',
-    })
+    toast.add({ title: 'Welcome back!' })
+  }
+  catch (error) {
+    toast.add({ title: 'Something went wrong', description: parseApiError(error), color: 'error' })
+  }
+  finally {
+    pending.value = false
   }
 }
 </script>
@@ -50,7 +55,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
     :schema="loginSchema"
     title="Welcome back"
     icon="i-lucide-lock"
-    :loading="loading"
+    :loading="pending"
     @submit="onSubmit"
   >
     <template #description>
