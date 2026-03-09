@@ -5,10 +5,10 @@ definePageMeta({
 </script>
 
 <template>
-  <UDashboardPanel id="home-dashboard">
+  <UDashboardPanel id="transactions">
     <template #header>
       <UDashboardNavbar
-        title="Dashboard"
+        title="Transactions"
         :ui="{ right: 'gap-3' }"
       >
         <template #leading>
