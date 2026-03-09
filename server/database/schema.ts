@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import { boolean, date, decimal, pgEnum, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 
 export const transactionTypeEnum = pgEnum('transaction_type', ['income', 'expense'])
@@ -31,3 +32,14 @@ export const transactions = pgTable('transactions', {
   date: date('date').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  transactions: many(transactions),
+}))
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  category: one(categories, {
+    fields: [transactions.categoryId],
+    references: [categories.id],
+  }),
+}))

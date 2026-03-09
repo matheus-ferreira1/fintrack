@@ -49,6 +49,9 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
   catch (err) {
     toast.add({ title: 'Something went wrong', description: parseApiError(err), color: 'error' })
   }
+  finally {
+    pending.value = false
+  }
 }
 </script>
 

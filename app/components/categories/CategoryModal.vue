@@ -28,16 +28,18 @@ const typeOptions = [
   { label: 'Expense', value: 'expense' },
 ]
 
-watch(() => props.category, (cat) => {
-  if (cat) {
-    state.name = cat.name
-    state.type = cat.type
-    state.color = cat.color
-  }
-  else {
-    state.name = ''
-    state.type = 'expense'
-    state.color = '#6366f1'
+watch(open, (isOpen) => {
+  if (isOpen) {
+    if (props.category) {
+      state.name = props.category.name
+      state.type = props.category.type
+      state.color = props.category.color
+    }
+    else {
+      state.name = ''
+      state.type = 'expense'
+      state.color = '#6366f1'
+    }
   }
 })
 
