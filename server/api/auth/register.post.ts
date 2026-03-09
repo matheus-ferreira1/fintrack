@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 409, statusMessage: 'Email already registered' })
   }
 
-  const passwordHash = await hashPassword(body.password)
+  const passwordHash = await createHashedPassword(body.password)
 
   const [user] = await db.insert(users).values({
     name: body.name,
