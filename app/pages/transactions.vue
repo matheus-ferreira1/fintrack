@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
 import type { Transaction, TransactionListResponse, TransactionSummary } from '#shared/types/transaction'
+import type { TableColumn } from '@nuxt/ui'
 
 definePageMeta({
   middleware: 'auth',
@@ -9,7 +9,6 @@ definePageMeta({
 const toast = useToast()
 const confirm = useConfirmDialog()
 
-// --- Filters & pagination state ---
 const search = ref('')
 const debouncedSearch = ref('')
 const typeFilter = ref<'all' | 'income' | 'expense'>('all')
@@ -19,7 +18,6 @@ const selectedYear = ref<number>(new Date().getFullYear())
 const page = ref(1)
 const perPage = ref(10)
 
-// Debounce search input
 let searchDebounceTimer: ReturnType<typeof setTimeout>
 watch(search, (value) => {
   clearTimeout(searchDebounceTimer)
@@ -29,7 +27,6 @@ watch(search, (value) => {
   }, 300)
 })
 
-// Reset page when filters change
 watch([typeFilter, sortOrder, selectedMonth, selectedYear, perPage], () => {
   page.value = 1
 })
@@ -48,7 +45,6 @@ const listQuery = computed(() => ({
   perPage: perPage.value,
 }))
 
-// --- Data fetching ---
 const { data: transactionList, refresh: refreshList, pending: listPending } = await useFetch<TransactionListResponse>('/api/transactions', {
   key: 'transactions',
   query: listQuery,
@@ -63,11 +59,9 @@ async function refreshAll() {
   await Promise.all([refreshList(), refreshSummary()])
 }
 
-// --- Derived data ---
 const transactions = computed(() => transactionList.value?.data ?? [])
 const totalTransactions = computed(() => transactionList.value?.total ?? 0)
 
-// --- Modal state ---
 const modalOpen = ref(false)
 const editingTransaction = ref<Transaction | null>(null)
 
@@ -81,7 +75,6 @@ function openEditModal(transaction: Transaction) {
   modalOpen.value = true
 }
 
-// --- Delete ---
 const isDeleting = ref(false)
 
 async function handleDelete(id: string) {
@@ -117,17 +110,6 @@ function getDropdownItems(transaction: Transaction) {
   ]
 }
 
-// --- Formatting helpers ---
-function formatCurrency(value: string | number) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value))
-}
-
-function formatDate(dateString: string) {
-  const [year, month, day] = dateString.split('-').map(Number)
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(year!, month! - 1, day!))
-}
-
-// --- Filter options ---
 const typeFilterOptions = [
   { label: 'All Types', value: 'all' },
   { label: 'Income', value: 'income' },
@@ -166,7 +148,6 @@ const yearOptions = Array.from({ length: 5 }, (_, i) => ({
   value: currentYear - i,
 }))
 
-// --- Summary cards ---
 const summaryCards = computed(() => [
   {
     label: 'Total Transactions',
@@ -198,7 +179,6 @@ const summaryCards = computed(() => [
   },
 ])
 
-// --- Table columns ---
 const columns: TableColumn<Transaction>[] = [
   { accessorKey: 'description', header: 'Transaction' },
   { accessorKey: 'category', header: 'Category' },
@@ -207,7 +187,6 @@ const columns: TableColumn<Transaction>[] = [
   { accessorKey: 'actions', header: '' },
 ]
 
-// --- Pagination ---
 const paginationStart = computed(() => ((page.value - 1) * perPage.value) + 1)
 const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalTransactions.value))
 </script>
@@ -235,7 +214,6 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
 
     <template #body>
       <div class="flex flex-col gap-6">
-        <!-- Summary cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <UCard
             v-for="card in summaryCards"
@@ -261,7 +239,6 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
           </UCard>
         </div>
 
-        <!-- Filters -->
         <div class="flex flex-wrap items-center gap-3">
           <UInput
             v-model="search"
@@ -295,7 +272,6 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
           />
         </div>
 
-        <!-- Table -->
         <UTable
           :data="transactions"
           :columns="columns"
@@ -369,7 +345,6 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
           </template>
         </UTable>
 
-        <!-- Pagination -->
         <div
           v-if="totalTransactions > 0"
           class="flex flex-wrap items-center justify-between gap-4"
