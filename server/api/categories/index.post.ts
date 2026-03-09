@@ -1,4 +1,5 @@
 import { categorySchema } from '#shared/schemas/category'
+import { and, eq } from 'drizzle-orm'
 import { db } from '~~/server/database'
 import { categories } from '~~/server/database/schema'
 
@@ -9,6 +10,18 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readValidatedBody(event, categorySchema.parse)
+
+  const existingCategory = await db.query.categories.findFirst({
+    where: and(
+      eq(categories.name, body.name),
+      eq(categories.type, body.type),
+      eq(categories.userId, session.user.id),
+    ),
+  })
+
+  if (existingCategory) {
+    throw createError({ statusCode: 409, statusMessage: 'Category with the same name already exists' })
+  }
 
   const [category] = await db.insert(categories).values({
     ...body,
