@@ -1,7 +1,7 @@
-import { and, count, desc, asc, eq, ilike, sql } from 'drizzle-orm'
-import { db } from '~~/server/database'
-import { categories, transactions } from '~~/server/database/schema'
 import type { TransactionType } from '#shared/types/transaction'
+import { and, asc, count, desc, eq, ilike, sql } from 'drizzle-orm'
+import { db } from '~~/server/database'
+import { transactions } from '~~/server/database/schema'
 
 export default defineEventHandler(async (event) => {
   const session = await getUserSession(event)
