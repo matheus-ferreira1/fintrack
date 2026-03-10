@@ -7,4 +7,5 @@ export interface Category {
   color: string
   type: TransactionType
   createdAt: string
+  updatedAt: string
 }

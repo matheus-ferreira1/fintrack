@@ -15,6 +15,7 @@ export interface Transaction {
   isRecurring: boolean
   date: string
   createdAt: string
+  updatedAt: string
 }
 
 export interface TransactionSummary {
