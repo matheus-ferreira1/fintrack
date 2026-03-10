@@ -6,8 +6,6 @@ definePageMeta({
   middleware: 'auth',
 })
 
-const { $api } = useNuxtApp()
-
 const { user, fetch } = useUserSession()
 
 const toast = useToast()
@@ -45,6 +43,7 @@ const isFormDirty = computed(() => {
 })
 
 async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
+  const { $api } = useNuxtApp()
   isLoading.value = true
 
   try {
