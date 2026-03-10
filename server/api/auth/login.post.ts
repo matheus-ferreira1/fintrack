@@ -23,6 +23,8 @@ export default defineEventHandler(async (event) => {
     user,
   })
 
+  const { passwordHash: _, ...userWithoutPassword } = user
+
   setResponseStatus(event, 201)
-  return { user }
+  return { user: userWithoutPassword }
 })
