@@ -65,6 +65,7 @@ const transactions = computed(() => transactionList.value?.data ?? [])
 const totalTransactions = computed(() => transactionList.value?.total ?? 0)
 
 const modalOpen = ref(false)
+const generateRecurringOpen = ref(false)
 const editingTransaction = ref<Transaction | null>(null)
 
 function openCreateModal() {
@@ -205,6 +206,12 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
         </template>
 
         <template #right>
+          <UButton
+            label="Generate Recurring"
+            icon="i-lucide-refresh-cw"
+            variant="outline"
+            @click="generateRecurringOpen = true"
+          />
           <UButton
             label="Add Transaction"
             icon="i-lucide-plus"
@@ -375,6 +382,13 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
       <TransactionsTransactionModal
         v-model:open="modalOpen"
         :transaction="editingTransaction"
+        @success="refreshAll"
+      />
+
+      <TransactionsGenerateRecurringModal
+        v-model:open="generateRecurringOpen"
+        :source-month="selectedMonth"
+        :source-year="selectedYear"
         @success="refreshAll"
       />
     </template>

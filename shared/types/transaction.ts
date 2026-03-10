@@ -25,6 +25,20 @@ export interface TransactionSummary {
   net: string
 }
 
+export interface RecurringPreview {
+  transactions: Array<{
+    description: string
+    type: TransactionType
+    categoryName: string
+    categoryColor: string
+    sourceDate: string
+    targetDate: string
+  }>
+  alreadyGenerated: boolean
+  targetMonth: number
+  targetYear: number
+}
+
 export interface TransactionListResponse {
   data: Transaction[]
   total: number

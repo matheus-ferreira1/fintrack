@@ -9,4 +9,9 @@ export const transactionSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
 })
 
+export const generateRecurringSchema = z.object({
+  sourceMonth: z.number().int().min(1).max(12),
+  sourceYear: z.number().int().min(2000).max(2100),
+})
+
 export type TransactionInput = z.infer<typeof transactionSchema>
