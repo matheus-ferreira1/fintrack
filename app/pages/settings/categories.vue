@@ -5,10 +5,12 @@ definePageMeta({
   middleware: 'auth',
 })
 
+const { $api } = useNuxtApp()
+
 const toast = useToast()
 const confirm = useConfirmDialog()
 
-const { data: categories, refresh, pending } = await useFetch<Category[]>('/api/categories', { key: 'categories' })
+const { data: categories, refresh, pending } = await useAPI<Category[]>('/api/categories', { key: 'categories' })
 
 const search = ref('')
 const isDeleting = ref(false)
@@ -54,7 +56,7 @@ async function handleDelete(id: string) {
   if (confirmed) {
     try {
       isDeleting.value = true
-      await $fetch(`/api/categories/${id}`, { method: 'DELETE' })
+      await $api(`/api/categories/${id}`, { method: 'DELETE' })
       toast.add({ title: 'Category deleted', color: 'success', icon: 'i-lucide-check-circle' })
       refresh()
     }

@@ -3,6 +3,8 @@ import { registerSchema } from '#shared/schemas/auth'
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
 import type * as z from 'zod'
 
+const { $api } = useNuxtApp()
+
 definePageMeta({
   layout: 'auth',
   middleware: 'auth',
@@ -38,7 +40,7 @@ type Schema = z.output<typeof registerSchema>
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
   try {
     pending.value = true
-    await $fetch('/api/auth/register', {
+    await $api('/api/auth/register', {
       method: 'POST',
       body: payload.data,
     })

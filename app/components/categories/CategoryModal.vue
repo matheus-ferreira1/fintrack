@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { categorySchema } from '#shared/schemas/category';
 
+const { $api } = useNuxtApp()
+
 const props = defineProps<{
   category?: Category | null
 }>()
@@ -47,14 +49,14 @@ async function onSubmit() {
   loading.value = true
   try {
     if (isEditing.value && props.category) {
-      await $fetch(`/api/categories/${props.category.id}`, {
+      await $api(`/api/categories/${props.category.id}`, {
         method: 'PUT',
         body: state,
       })
       toast.add({ title: 'Category updated', color: 'success', icon: 'i-lucide-check-circle' })
     }
     else {
-      await $fetch('/api/categories', {
+      await $api('/api/categories', {
         method: 'POST',
         body: state,
       })

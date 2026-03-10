@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { CategoryBreakdown, DashboardOverview, MonthlyTrends, RecentTransaction, RecentTransactions } from '#shared/types/dashboard'
 import type { TableColumn } from '@nuxt/ui'
-import type { DashboardOverview, MonthlyTrends, CategoryBreakdown, RecentTransactions, RecentTransaction } from '#shared/types/dashboard'
 
 definePageMeta({
   middleware: 'auth',
@@ -9,12 +9,12 @@ definePageMeta({
 const categoryType = ref<'income' | 'expense'>('expense')
 const modalOpen = ref(false)
 
-const { data: overview } = await useFetch<DashboardOverview>('/api/dashboard/overview')
-const { data: trends } = await useFetch<MonthlyTrends>('/api/dashboard/monthly-trends')
-const { data: breakdown } = await useFetch<CategoryBreakdown>('/api/dashboard/category-breakdown', {
+const { data: overview } = await useAPI<DashboardOverview>('/api/dashboard/overview')
+const { data: trends } = await useAPI<MonthlyTrends>('/api/dashboard/monthly-trends')
+const { data: breakdown } = await useAPI<CategoryBreakdown>('/api/dashboard/category-breakdown', {
   query: computed(() => ({ type: categoryType.value })),
 })
-const { data: recentTransactions, refresh: refreshRecent } = await useFetch<RecentTransactions>('/api/dashboard/recent-transactions')
+const { data: recentTransactions, refresh: refreshRecent } = await useAPI<RecentTransactions>('/api/dashboard/recent-transactions')
 
 const summaryCards = computed(() => [
   {

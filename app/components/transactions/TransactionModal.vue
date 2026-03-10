@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date'
-import { transactionSchema } from '#shared/schemas/transaction'
-import type { Transaction, TransactionType } from '#shared/types/transaction'
+import { transactionSchema } from '#shared/schemas/transaction';
+import type { Transaction, TransactionType } from '#shared/types/transaction';
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
+
+const { $api } = useNuxtApp()
 
 const props = defineProps<{
   transaction?: Transaction | null
@@ -34,7 +36,7 @@ const typeOptions = [
   { label: 'Income', value: 'income' },
 ]
 
-const { data: categories, pending: loadingCategories } = await useFetch<Category[]>('/api/categories', {
+const { data: categories, pending: loadingCategories } = await useAPI<Category[]>('/api/categories', {
   key: 'categories',
 })
 
@@ -82,14 +84,14 @@ async function onSubmit() {
   loading.value = true
   try {
     if (isEditing.value && props.transaction) {
-      await $fetch(`/api/transactions/${props.transaction.id}`, {
+      await $api(`/api/transactions/${props.transaction.id}`, {
         method: 'PUT',
         body: state,
       })
       toast.add({ title: 'Transaction updated', color: 'success', icon: 'i-lucide-check-circle' })
     }
     else {
-      await $fetch('/api/transactions', {
+      await $api('/api/transactions', {
         method: 'POST',
         body: state,
       })

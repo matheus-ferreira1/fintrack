@@ -6,6 +6,8 @@ definePageMeta({
   middleware: 'auth',
 })
 
+const { $api } = useNuxtApp()
+
 const toast = useToast()
 const confirm = useConfirmDialog()
 
@@ -45,12 +47,12 @@ const listQuery = computed(() => ({
   perPage: perPage.value,
 }))
 
-const { data: transactionList, refresh: refreshList, pending: listPending } = await useFetch<TransactionListResponse>('/api/transactions', {
+const { data: transactionList, refresh: refreshList, pending: listPending } = await useAPI<TransactionListResponse>('/api/transactions', {
   key: 'transactions',
   query: listQuery,
 })
 
-const { data: summary, refresh: refreshSummary } = await useFetch<TransactionSummary>('/api/transactions/summary', {
+const { data: summary, refresh: refreshSummary } = await useAPI<TransactionSummary>('/api/transactions/summary', {
   key: 'transactions-summary',
   query: sharedFilterQuery,
 })
@@ -87,7 +89,7 @@ async function handleDelete(id: string) {
 
   try {
     isDeleting.value = true
-    await $fetch(`/api/transactions/${id}`, { method: 'DELETE' })
+    await $api(`/api/transactions/${id}`, { method: 'DELETE' })
     toast.add({ title: 'Transaction deleted', color: 'success', icon: 'i-lucide-check-circle' })
     await refreshAll()
   }

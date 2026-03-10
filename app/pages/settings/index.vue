@@ -6,6 +6,8 @@ definePageMeta({
   middleware: 'auth',
 })
 
+const { $api } = useNuxtApp()
+
 const { user, fetch } = useUserSession()
 
 const toast = useToast()
@@ -46,7 +48,7 @@ async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
   isLoading.value = true
 
   try {
-    await $fetch('/api/auth/profile', {
+    await $api('/api/auth/profile', {
       method: 'PATCH',
       body: event.data,
     })
