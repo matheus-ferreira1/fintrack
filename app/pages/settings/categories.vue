@@ -10,7 +10,7 @@ const { $api } = useNuxtApp()
 const toast = useToast()
 const confirm = useConfirmDialog()
 
-const { data: categories, refresh, pending } = await useAPI<Category[]>('/api/categories', { key: 'categories' })
+const { data: categories, refresh, pending } = useAPI<Category[]>('/api/categories', { key: 'categories' })
 
 const search = ref('')
 const isDeleting = ref(false)
@@ -110,7 +110,14 @@ const columns: TableColumn<Category>[] = [
             <p class="text-sm text-muted">
               {{ stat.label }}
             </p>
-            <p class="text-2xl font-semibold text-highlighted">
+            <USkeleton
+              v-if="!categories"
+              class="h-8 w-12 mt-1"
+            />
+            <p
+              v-else
+              class="text-2xl font-semibold text-highlighted"
+            >
               {{ stat.value }}
             </p>
           </div>
@@ -173,6 +180,15 @@ const columns: TableColumn<Category>[] = [
             size="sm"
           />
         </UDropdownMenu>
+      </template>
+
+      <template #loading>
+        <div class="h-20 flex w-full items-center justify-center">
+          <UIcon
+            name="i-lucide-loader-2"
+            class="size-6 text-muted animate-spin mx-auto my-6"
+          />
+        </div>
       </template>
 
       <template #empty>

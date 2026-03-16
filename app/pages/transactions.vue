@@ -47,12 +47,12 @@ const listQuery = computed(() => ({
   perPage: perPage.value,
 }))
 
-const { data: transactionList, refresh: refreshList, pending: listPending } = await useAPI<TransactionListResponse>('/api/transactions', {
+const { data: transactionList, refresh: refreshList, pending: listPending } = useAPI<TransactionListResponse>('/api/transactions', {
   key: 'transactions',
   query: listQuery,
 })
 
-const { data: summary, refresh: refreshSummary } = await useAPI<TransactionSummary>('/api/transactions/summary', {
+const { data: summary, refresh: refreshSummary } = useAPI<TransactionSummary>('/api/transactions/summary', {
   key: 'transactions-summary',
   query: sharedFilterQuery,
 })
@@ -237,7 +237,12 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
                 <p class="text-sm text-muted truncate">
                   {{ card.label }}
                 </p>
+                <USkeleton
+                  v-if="!summary"
+                  class="h-8 w-32 mt-1"
+                />
                 <p
+                  v-else
                   class="text-2xl font-semibold truncate"
                   :class="card.colorClass"
                 >
@@ -333,6 +338,15 @@ const paginationEnd = computed(() => Math.min(page.value * perPage.value, totalT
                 size="sm"
               />
             </UDropdownMenu>
+          </template>
+
+          <template #loading>
+            <div class="h-20 flex w-full items-center justify-center">
+              <UIcon
+                name="i-lucide-loader-2"
+                class="size-6 text-muted animate-spin mx-auto my-6"
+              />
+            </div>
           </template>
 
           <template #empty>
