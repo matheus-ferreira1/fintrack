@@ -6,15 +6,33 @@ definePageMeta({
   middleware: 'auth',
 })
 
+const { $api } = useNuxtApp()
+
 const categoryType = ref<'income' | 'expense'>('expense')
 const modalOpen = ref(false)
 
-const { data: overview } = await useAPI<DashboardOverview>('/api/dashboard/overview')
-const { data: trends } = await useAPI<MonthlyTrends>('/api/dashboard/monthly-trends')
-const { data: breakdown } = await useAPI<CategoryBreakdown>('/api/dashboard/category-breakdown', {
+const { data: dashboardData, pending: dashboardPending, refresh: refreshDashboard } = useAsyncData(
+  'dashboard',
+  (_nuxtApp, { signal }) => {
+    return Promise.all([
+      $api<DashboardOverview>('/api/dashboard/overview', { signal }),
+      $api<MonthlyTrends>('/api/dashboard/monthly-trends', { signal }),
+      $api<RecentTransactions>('/api/dashboard/recent-transactions', { signal }),
+    ]).then(([overview, trends, recentTransactions]) => ({
+      overview,
+      trends,
+      recentTransactions,
+    }))
+  },
+)
+
+const overview = computed(() => dashboardData.value?.overview ?? null)
+const trends = computed(() => dashboardData.value?.trends ?? null)
+const recentTransactions = computed(() => dashboardData.value?.recentTransactions ?? null)
+
+const { data: breakdown, pending: breakdownPending } = useAPI<CategoryBreakdown>('/api/dashboard/category-breakdown', {
   query: computed(() => ({ type: categoryType.value })),
 })
-const { data: recentTransactions, refresh: refreshRecent } = await useAPI<RecentTransactions>('/api/dashboard/recent-transactions')
 
 const summaryCards = computed(() => [
   {
@@ -101,7 +119,12 @@ const recentColumns: TableColumn<RecentTransaction>[] = [
                   <p class="text-sm text-muted truncate">
                     {{ card.label }}
                   </p>
+                  <USkeleton
+                    v-if="!overview"
+                    class="h-8 w-full mt-1"
+                  />
                   <p
+                    v-else
                     class="text-2xl font-semibold truncate"
                     :class="card.colorClass"
                   >
@@ -170,7 +193,19 @@ const recentColumns: TableColumn<RecentTransaction>[] = [
               </div>
             </template>
             <ClientOnly>
-              <DashboardCategoryPieChart :data="breakdown ?? null" />
+              <div
+                v-if="breakdownPending"
+                class="h-48 flex items-center justify-center"
+              >
+                <UIcon
+                  name="i-lucide-loader"
+                  class="size-6 text-muted animate-spin"
+                />
+              </div>
+              <DashboardCategoryPieChart
+                v-else
+                :data="breakdown ?? null"
+              />
               <template #fallback>
                 <div class="h-48 flex items-center justify-center">
                   <UIcon
@@ -204,6 +239,7 @@ const recentColumns: TableColumn<RecentTransaction>[] = [
           <UTable
             :data="recentTransactions ?? []"
             :columns="recentColumns"
+            :loading="dashboardPending"
             class="w-full"
           >
             <template #description-cell="{ row }">
@@ -260,7 +296,7 @@ const recentColumns: TableColumn<RecentTransaction>[] = [
 
       <TransactionsTransactionModal
         v-model:open="modalOpen"
-        @success="refreshRecent"
+        @success="refreshDashboard"
       />
     </template>
   </UDashboardPanel>
