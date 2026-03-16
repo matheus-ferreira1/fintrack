@@ -41,10 +41,12 @@ export default defineEventHandler(async (event) => {
   const whereClause = and(...conditions)
   const orderBy = sort === 'oldest' ? asc(transactions.date) : desc(transactions.date)
 
-  const [{ total }] = await db
+  const [result] = await db
     .select({ total: count() })
     .from(transactions)
     .where(whereClause)
+
+  const total = result?.total ?? 0
 
   const data = await db.query.transactions.findMany({
     where: whereClause,
