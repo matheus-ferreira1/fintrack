@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     name: body.name,
     email: body.email,
     passwordHash,
-  }).returning({ id: users.id, name: users.name, email: users.email, createdAt: users.createdAt, updatedAt: users.updatedAt })
+  }).returning()
 
   if (!user) {
     throw createError({ statusCode: 500, statusMessage: 'Failed to create user' })
