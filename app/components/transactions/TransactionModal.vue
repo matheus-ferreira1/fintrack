@@ -28,7 +28,7 @@ const state = reactive({
   date: '',
 })
 
-const calendarDate = ref<CalendarDate>(today(getLocalTimeZone()))
+const calendarDate = shallowRef<CalendarDate>(today(getLocalTimeZone()))
 const loading = ref(false)
 
 const typeOptions = [
@@ -42,6 +42,10 @@ const { data: categories, pending: loadingCategories } = await useAPI<Category[]
 
 const filteredCategories = computed(() =>
   (categories.value ?? []).filter(c => c.type === state.type),
+)
+
+const categoryItems = computed(() =>
+  filteredCategories.value.map(({ id, name, color }) => ({ id, name, color })),
 )
 
 function syncDateFromCalendar(date: CalendarDate) {
@@ -175,7 +179,7 @@ async function onSubmit() {
         >
           <USelectMenu
             v-model="state.categoryId"
-            :items="filteredCategories"
+            :items="categoryItems"
             :loading="loadingCategories"
             value-key="id"
             label-key="name"
