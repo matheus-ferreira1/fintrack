@@ -50,6 +50,7 @@ const listQuery = computed(() => ({
 const { data: transactionList, refresh: refreshList, pending: listPending } = useAPI<TransactionListResponse>('/api/transactions', {
   key: 'transactions',
   query: listQuery,
+  lazy: true,
 })
 
 const { data: summary, refresh: refreshSummary } = useAPI<TransactionSummary>('/api/transactions/summary', {

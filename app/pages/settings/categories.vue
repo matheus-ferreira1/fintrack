@@ -10,7 +10,7 @@ const { $api } = useNuxtApp()
 const toast = useToast()
 const confirm = useConfirmDialog()
 
-const { data: categories, refresh, pending } = useAPI<Category[]>('/api/categories', { key: 'categories' })
+const { data: categories, refresh, pending } = await useAPI<Category[]>('/api/categories', { key: 'categories', lazy: true })
 
 const search = ref('')
 const isDeleting = ref(false)

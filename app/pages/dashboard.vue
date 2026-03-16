@@ -24,6 +24,9 @@ const { data: dashboardData, pending: dashboardPending, refresh: refreshDashboar
       recentTransactions,
     }))
   },
+  {
+    lazy: true,
+  },
 )
 
 const overview = computed(() => dashboardData.value?.overview ?? null)
@@ -32,6 +35,7 @@ const recentTransactions = computed(() => dashboardData.value?.recentTransaction
 
 const { data: breakdown, pending: breakdownPending } = useAPI<CategoryBreakdown>('/api/dashboard/category-breakdown', {
   query: computed(() => ({ type: categoryType.value })),
+  lazy: true,
 })
 
 const summaryCards = computed(() => [
